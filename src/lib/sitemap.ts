@@ -6,7 +6,7 @@ import { Holiday } from "open-holiday-js";
 export type TRoutes = FileRouteTypes["fullPaths"];
 
 export const sitemap: Sitemap<TRoutes> = {
-  siteUrl: process.env.VERCEL_URL ?? "http://localhost:3000",
+  siteUrl: process.env.VERCEL_PROJECT_PRODUCTION_URL?`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`: "http://localhost:3000",
   defaultPriority: 0.5,
   routes: {
     "/": {
