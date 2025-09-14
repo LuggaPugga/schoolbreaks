@@ -1,71 +1,95 @@
+import { TanstackDevtools } from "@tanstack/react-devtools";
 import {
-  HeadContent,
-  Scripts,
-  createRootRouteWithContext,
-} from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanstackDevtools } from '@tanstack/react-devtools'
+	HeadContent,
+	Scripts,
+	createRootRouteWithContext,
+} from "@tanstack/react-router";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
-import Header from '../components/Header'
+import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
+import appCss from "../styles.css?url";
 
-import appCss from '../styles.css?url'
-
-import type { QueryClient } from '@tanstack/react-query'
+import { ThemeProvider } from "@/components/theme-provider";
+import { SettingsProvider } from "@/lib/use-settings";
+import type { QueryClient } from "@tanstack/react-query";
 
 interface MyRouterContext {
-  queryClient: QueryClient
+	queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  head: () => ({
-    meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'TanStack Start Starter',
-      },
-    ],
-    links: [
-      {
-        rel: 'stylesheet',
-        href: appCss,
-      },
-    ],
-  }),
+	head: () => ({
+		meta: [
+			{
+				charSet: "utf-8",
+			},
+			{
+				name: "viewport",
+				content: "width=device-width, initial-scale=1",
+			},
+			{
+				title: "School Breaks",
+			},
+			{
+				name: "description",
+				content: "Plan smarter with school holiday calendars.",
+			},
+			{ name: "og:type", content: "website" },
+			{ name: "og:title", content: "School Breaks" },
+			{
+				name: "og:description",
+				content: "Plan smarter with school holiday calendars.",
+			},
+			{ name: "twitter:card", content: "summary" },
+			{ name: "twitter:title", content: "School Breaks" },
+			{
+				name: "twitter:description",
+				content: "Plan smarter with school holiday calendars.",
+			},
+		],
+		links: [
+			{
+				rel: "stylesheet",
+				href: appCss,
+			},
+		],
+	}),
 
-  shellComponent: RootDocument,
-})
+	shellComponent: RootDocument,
+});
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <Header />
-        {children}
-        <TanstackDevtools
-          config={{
-            position: 'bottom-left',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            TanStackQueryDevtools,
-          ]}
-        />
-        <Scripts />
-      </body>
-    </html>
-  )
+	return (
+		<html lang="en">
+			<head>
+				<HeadContent />
+			</head>
+			<body>
+				<ThemeProvider
+					themes={["light", "dark"]}
+					attribute="class"
+					enableSystem
+					storageKey="theme"
+				>
+					<SettingsProvider>
+						<main className="mx-auto max-w-5xl px-4">{children}</main>
+					</SettingsProvider>
+				</ThemeProvider>
+				<TanstackDevtools
+					config={{
+						position: "bottom-left",
+					}}
+					plugins={[
+						{
+							name: "Tanstack Router",
+							render: <TanStackRouterDevtoolsPanel />,
+						},
+						TanStackQueryDevtools,
+					]}
+				/>
+				<Scripts />
+			</body>
+		</html>
+	);
 }
