@@ -58,18 +58,13 @@ export default function MainPage({
 
 	const targetCountryIso = useMemo(() => {
 		if (!country || !countries?.length) return null;
-		const incoming = normalizeSlug(country);
-		for (const c of countries) {
-			const nameTexts = [...(c.name?.map((n) => n.text) ?? [])].filter(
-				Boolean,
-			) as string[];
-			for (const text of nameTexts) {
-				if (incoming === normalizeSlug(text)) {
-					return c.isoCode ?? null;
-				}
-			}
-		}
-		return null;
+		const incomingSlug = normalizeSlug(country);
+
+		return (
+			countries.find((c) =>
+				c.name?.some((n) => n.text && normalizeSlug(n.text) === incomingSlug),
+			)?.isoCode ?? null
+		);
 	}, [country, countries]);
 
 	const { data: allSubdivisions } = useListSubdivisions(targetCountryIso, {
@@ -79,18 +74,13 @@ export default function MainPage({
 
 	const targetSubdivisionCode = useMemo(() => {
 		if (!subdivision || !allSubdivisions?.length) return null;
-		const incoming = normalizeSlug(subdivision);
-		for (const s of allSubdivisions) {
-			const nameTexts = [...(s.name?.map((n) => n.text) ?? [])].filter(
-				Boolean,
-			) as string[];
-			for (const text of nameTexts) {
-				if (incoming === normalizeSlug(text)) {
-					return s.code ?? null;
-				}
-			}
-		}
-		return null;
+		const incomingSlug = normalizeSlug(subdivision);
+
+		return (
+			allSubdivisions.find((s) =>
+				s.name?.some((n) => n.text && normalizeSlug(n.text) === incomingSlug),
+			)?.code ?? null
+		);
 	}, [subdivision, allSubdivisions]);
 
 	const {
