@@ -1,17 +1,14 @@
-import { TanstackDevtools } from "@tanstack/react-devtools";
 import {
 	HeadContent,
 	Scripts,
 	createRootRouteWithContext,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Analytics } from "@vercel/analytics/react";
 
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
 
 import { ThemeProvider } from "@/components/theme-provider";
-import { SettingsProvider } from "@/lib/use-settings";
+import { LanguageProvider } from "@/lib/use-language";
 import type { QueryClient } from "@tanstack/react-query";
 
 interface MyRouterContext {
@@ -66,29 +63,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<ThemeProvider
-					themes={["light", "dark"]}
-					attribute="class"
-					enableSystem
-					storageKey="theme"
-				>
-					<SettingsProvider>
+				<LanguageProvider>
+					<ThemeProvider
+						themes={["light", "dark"]}
+						attribute="class"
+						enableSystem
+						storageKey="theme"
+					>
 						<main className="mx-auto max-w-5xl px-4">{children}</main>
-					</SettingsProvider>
-				</ThemeProvider>
-				<TanstackDevtools
-					config={{
-						position: "bottom-left",
-						defaultOpen: !import.meta.env.PROD,
-					}}
-					plugins={[
-						{
-							name: "Tanstack Router",
-							render: <TanStackRouterDevtoolsPanel />,
-						},
-						TanStackQueryDevtools,
-					]}
-				/>
+					</ThemeProvider>
+				</LanguageProvider>
 				<Scripts />
 				<Analytics />
 			</body>
