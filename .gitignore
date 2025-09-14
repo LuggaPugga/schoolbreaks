@@ -10,3 +10,6 @@ count.txt
 .output
 .vinxi
 todos.json
+
+# gets generated on build
+public/sitemap.xml
