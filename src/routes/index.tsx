@@ -5,8 +5,9 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
 	loader: async () => {
 		const res = await getLocation();
-		const countryIsoCode = res?.headers?.country ?? null;
-		return { countryIsoCode };
+		const countryIsoCode = res.country ?? null;
+		const subdivisionCode = res.countryRegion ?? res.region ?? null;
+		return { countryIsoCode, subdivisionCode };
 	},
 	component: App,
 	head: () => ({
@@ -26,8 +27,14 @@ export const Route = createFileRoute("/")({
 });
 
 function App() {
-	const { countryIsoCode } = Route.useLoaderData() as {
+	const { countryIsoCode, subdivisionCode } = Route.useLoaderData() as {
 		countryIsoCode: string | null;
+		subdivisionCode: string | null;
 	};
-	return <MainPage countryIsoCode={countryIsoCode} />;
+	return (
+		<MainPage
+			countryIsoCode={countryIsoCode}
+			subdivisionCode={subdivisionCode}
+		/>
+	);
 }

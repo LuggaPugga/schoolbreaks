@@ -6,6 +6,6 @@ export const getLocation = createServerFn({
 	method: "GET",
 }).handler(() => {
 	const request = getWebRequest();
-	const { country, countryRegion } = geolocation(request);
-	return { headers: { country, countryRegion } };
+	const location = geolocation(request);
+	return location;
 });

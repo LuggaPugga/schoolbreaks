@@ -45,7 +45,13 @@ export default function MainPage({
 	country,
 	subdivision,
 	countryIsoCode,
-}: { country?: string; subdivision?: string; countryIsoCode?: string | null }) {
+	subdivisionCode,
+}: {
+	country?: string;
+	subdivision?: string;
+	countryIsoCode?: string | null;
+	subdivisionCode?: string | null;
+}) {
 	const [languagePreference] = useLanguagePreference();
 	const navigate = useNavigate();
 
@@ -75,6 +81,7 @@ export default function MainPage({
 	});
 
 	const targetSubdivisionCode = useMemo(() => {
+		if (subdivisionCode) return subdivisionCode;
 		if (!subdivision || !allSubdivisions?.length) return null;
 		const incomingSlug = normalizeSlug(subdivision);
 
@@ -83,7 +90,7 @@ export default function MainPage({
 				s.name?.some((n) => n.text && normalizeSlug(n.text) === incomingSlug),
 			)?.code ?? null
 		);
-	}, [subdivision, allSubdivisions]);
+	}, [subdivisionCode, subdivision, allSubdivisions]);
 
 	const {
 		data: holidays,
