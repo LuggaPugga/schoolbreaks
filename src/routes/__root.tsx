@@ -79,6 +79,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<TanstackDevtools
 					config={{
 						position: "bottom-left",
+						defaultOpen: !import.meta.env.PROD,
 					}}
 					plugins={[
 						{
