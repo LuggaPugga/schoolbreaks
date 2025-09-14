@@ -6,7 +6,9 @@ export const Route = createFileRoute("/")({
 	loader: async () => {
 		const res = await getLocation();
 		const countryIsoCode = res.country ?? null;
-		const subdivisionCode = res.countryRegion ?? res.region ?? null;
+		const subdivisionCode = res.country
+			? `${res.country}-${res.countryRegion ?? res.region ?? null}`
+			: null;
 		return { countryIsoCode, subdivisionCode };
 	},
 	component: App,
