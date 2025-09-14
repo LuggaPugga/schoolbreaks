@@ -10,7 +10,7 @@ import {
 	useListSubdivisions,
 	useSchoolHolidays,
 } from "@/lib/use-holidays";
-import { useSettings } from "@/lib/use-settings";
+import useLanguagePreference from "@/lib/use-language";
 import { normalizeSlug } from "@/lib/utils";
 import { useNavigate } from "@tanstack/react-router";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
@@ -45,14 +45,14 @@ export default function MainPage({
 	country,
 	subdivision,
 }: { country?: string; subdivision?: string }) {
-	const { settings } = useSettings();
+	const [languagePreference] = useLanguagePreference();
 	const navigate = useNavigate();
 
 	const currentYear = useMemo(() => new Date().getFullYear(), []);
 	const [viewYear, setViewYear] = useState<number>(currentYear);
 	const start = useMemo(() => new Date(viewYear, 0, 1), [viewYear]);
 	const end = useMemo(() => new Date(viewYear, 11, 31), [viewYear]);
-	const language = settings.languageMode === "english" ? "en" : undefined;
+	const language = languagePreference === "english" ? "en" : undefined;
 
 	const { data: countries } = useListCountries({ language });
 
@@ -74,7 +74,7 @@ export default function MainPage({
 
 	const { data: allSubdivisions } = useListSubdivisions(targetCountryIso, {
 		enabled: Boolean(targetCountryIso),
-		language,
+		language: languagePreference === "english" ? "en" : undefined,
 	});
 
 	const targetSubdivisionCode = useMemo(() => {
@@ -102,7 +102,7 @@ export default function MainPage({
 		start,
 		end,
 		targetSubdivisionCode,
-		language,
+		languagePreference === "english" ? "en" : undefined,
 		{ enabled: Boolean(targetCountryIso) },
 	);
 
@@ -277,7 +277,7 @@ export default function MainPage({
 					value={{
 						countryIsoCode: targetCountryIso,
 						subdivisionCode: targetSubdivisionCode,
-						languageMode: settings.languageMode,
+						languageMode: languagePreference,
 					}}
 					onChange={(next) => {
 						const countryChanged = next.countryIsoCode !== targetCountryIso;
