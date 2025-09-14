@@ -13,19 +13,24 @@ export function LanguageProvider({
 }: {
 	children: React.ReactNode;
 }) {
-	const [language, setLanguage] = useState<LanguagePreference>(() => {
-		if (typeof window === "undefined") return "english";
-		const stored = window.localStorage.getItem("language");
-		return stored === "native" || stored === "english"
-			? (stored as LanguagePreference)
-			: "english";
-	});
+	const [language, setLanguage] = useState<LanguagePreference>("english");
+	const [isInitialized, setIsInitialized] = useState(false);
 
 	useEffect(() => {
-		try {
+		if (typeof window !== "undefined" && !isInitialized) {
+			const stored = window.localStorage.getItem("language");
+			if (stored === "native" || stored === "english") {
+				setLanguage(stored as LanguagePreference);
+			}
+			setIsInitialized(true);
+		}
+	}, [isInitialized]);
+
+	useEffect(() => {
+		if (isInitialized && typeof window !== "undefined") {
 			window.localStorage.setItem("language", language);
-		} catch {}
-	}, [language]);
+		}
+	}, [language, isInitialized]);
 
 	const value = useMemo(() => ({ language, setLanguage }), [language]);
 
