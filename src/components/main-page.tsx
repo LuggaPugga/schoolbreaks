@@ -31,7 +31,7 @@ import {
 	Github,
 	RotateCcw,
 } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface SchoolHolidayLite {
 	startDate?: Date | null;
@@ -130,13 +130,33 @@ export default function MainPage({
 
 	const listRef = useRef<HTMLDivElement | null>(null);
 
+	const [isSmallScreen, setIsSmallScreen] = useState(false);
+	useEffect(() => {
+		const mql = window.matchMedia("(max-width: 640px)");
+		const onChange = () => setIsSmallScreen(mql.matches);
+		onChange();
+		if (typeof mql.addEventListener === "function") {
+			mql.addEventListener("change", onChange);
+		} else if (typeof (mql as any).addListener === "function") {
+			(mql as any).addListener(onChange);
+		}
+		return () => {
+			if (typeof mql.removeEventListener === "function") {
+				mql.removeEventListener("change", onChange);
+			} else if (typeof (mql as any).removeListener === "function") {
+				(mql as any).removeListener(onChange);
+			}
+		};
+	}, []);
+
 	const count = sortedHolidays.length;
 	const virtualizer = useWindowVirtualizer({
 		count,
-		estimateSize: () => 400,
-		overscan: 8,
+		estimateSize: () => (isSmallScreen ? 200 : 420),
+		overscan: isSmallScreen ? 6 : 10,
 		scrollMargin: listRef.current?.offsetTop ?? 0,
 	});
+
 
 	const subdivisionsByCode = useMemo(() => {
 		return new Map((allSubdivisions ?? []).map((s) => [s.code, s]));
@@ -226,8 +246,8 @@ export default function MainPage({
 	}
 
 	return (
-		<div className="text-center">
-			<div className="flex items-center justify-between gap-3 pt-14 pb-8">
+		<div className="text-center px-4 sm:px-8">
+			<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-10 sm:pt-14 pb-6 sm:pb-8">
 				<div className="text-left">
 					<h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-primary">
 						School Breaks
@@ -236,7 +256,7 @@ export default function MainPage({
 						Plan smarter with school holiday calendars
 					</p>
 				</div>
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-2 mt-3 sm:mt-0 self-start sm:self-auto">
 					<Button
 						asChild
 						variant="outline"
@@ -271,7 +291,7 @@ export default function MainPage({
 				</div>
 			</div>
 
-			<div className="flex flex-row items-start justify-between mb-6">
+			<div className="flex flex-col sm:flex-row items-stretch sm:items-start justify-between gap-3 sm:gap-4 mb-6">
 				<CountrySubdivisionPicker
 					value={{
 						countryIsoCode: targetCountryIso,
@@ -287,7 +307,7 @@ export default function MainPage({
 						navigateForSelection(nextCountryIso, nextSubdivision);
 					}}
 				/>
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-2 sm:self-auto self-end flex-wrap justify-end">
 					<SettingsPicker />
 					<div className="flex items-center gap-1 ml-3">
 						<span className="text-sm text-muted-foreground mr-1 hidden sm:inline">
@@ -345,7 +365,7 @@ export default function MainPage({
 											<Skeleton className="h-5 w-24" />
 										</div>
 									</div>
-									<div className="flex-shrink-0">
+									<div className="hidden sm:block">
 										<Skeleton className="h-64 w-[320px]" />
 									</div>
 								</div>
@@ -392,7 +412,7 @@ export default function MainPage({
 							})();
 							return (
 								<div
-									key={item.key}
+									key={`${item.key}-${isSmallScreen ? 'sm' : 'lg'}`}
 									ref={virtualizer.measureElement}
 									style={{
 										position: "absolute",
@@ -464,7 +484,7 @@ export default function MainPage({
 													</div>
 												</div>
 												{holiday.startDate && holiday.endDate && (
-													<div className="flex-shrink-0">
+													<div className="hidden sm:block">
 														<Calendar
 															mode="range"
 															startMonth={holiday.startDate}
