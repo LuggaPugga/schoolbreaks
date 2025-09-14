@@ -44,7 +44,8 @@ interface SchoolHolidayLite {
 export default function MainPage({
 	country,
 	subdivision,
-}: { country?: string; subdivision?: string }) {
+	countryIsoCode,
+}: { country?: string; subdivision?: string; countryIsoCode?: string | null }) {
 	const [languagePreference] = useLanguagePreference();
 	const navigate = useNavigate();
 
@@ -57,6 +58,7 @@ export default function MainPage({
 	const { data: countries } = useListCountries({ language });
 
 	const targetCountryIso = useMemo(() => {
+		if (countryIsoCode) return countryIsoCode;
 		if (!country || !countries?.length) return null;
 		const incomingSlug = normalizeSlug(country);
 
@@ -65,7 +67,7 @@ export default function MainPage({
 				c.name?.some((n) => n.text && normalizeSlug(n.text) === incomingSlug),
 			)?.isoCode ?? null
 		);
-	}, [country, countries]);
+	}, [countryIsoCode, country, countries]);
 
 	const { data: allSubdivisions } = useListSubdivisions(targetCountryIso, {
 		enabled: Boolean(targetCountryIso),
