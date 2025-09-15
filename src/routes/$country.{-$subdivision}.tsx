@@ -1,5 +1,6 @@
 import MainPage from "@/components/main-page";
 import { createFileRoute } from "@tanstack/react-router";
+import { buildAbsoluteUrl, normalizeSlug } from "@/lib/utils";
 
 export const Route = createFileRoute("/$country/{-$subdivision}")({
 	component: RouteComponent,
@@ -20,12 +21,28 @@ export const Route = createFileRoute("/$country/{-$subdivision}")({
 		const description = subdivisionTitle
 			? `View school holiday calendars for ${countryTitle} (${subdivisionTitle}).`
 			: `View school holiday calendars for ${countryTitle}.`;
+		const path = subdivisionTitle
+			? `/${normalizeSlug(countrySlug)}/${normalizeSlug(subdivisionSlug)}`
+			: `/${normalizeSlug(countrySlug)}`;
+		const url = buildAbsoluteUrl(path);
+		const jsonLd = {
+			"@context": "https://schema.org",
+			"@type": "WebPage",
+			name: pageTitle,
+			url,
+			description,
+		};
 		return {
 			meta: [
 				{ title: pageTitle },
 				{ name: "description", content: description },
 				{ name: "og:title", content: pageTitle },
 				{ name: "og:description", content: description },
+				{ name: "og:url", content: url },
+			],
+			links: [{ rel: "canonical", href: url }],
+			scripts: [
+				{ type: "application/ld+json", children: JSON.stringify(jsonLd) },
 			],
 		};
 	},
