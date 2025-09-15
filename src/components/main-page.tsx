@@ -29,9 +29,16 @@ import {
 	ChevronLeft,
 	ChevronRight,
 	Github,
+	Ellipsis,
 	RotateCcw,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface SchoolHolidayLite {
 	startDate?: Date | null;
@@ -247,7 +254,7 @@ export default function MainPage({
 
 	return (
 		<div className="text-center px-4 sm:px-8">
-			<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-10 sm:pt-14 pb-6 sm:pb-8">
+			<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-8 sm:pt-14 pb-4 sm:pb-8">
 				<div className="text-left">
 					<h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-primary">
 						School Breaks
@@ -257,36 +264,70 @@ export default function MainPage({
 					</p>
 				</div>
 				<div className="flex items-center gap-2 mt-3 sm:mt-0 self-start sm:self-auto">
-					<Button
-						asChild
-						variant="outline"
-						size="icon"
-						aria-label="Open GitHub repository"
-						title="GitHub Repository"
-					>
-						<a
-							href="https://github.com/LuggaPugga/schoolbreaks"
-							target="_blank"
-							rel="noreferrer noopener"
+					{/* Mobile more menu */}
+					<div className="sm:hidden">
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button variant="outline" size="icon" aria-label="More actions">
+									<Ellipsis className="size-5" />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end" className="w-48">
+								<DropdownMenuItem asChild>
+									<a
+										href="https://github.com/LuggaPugga/schoolbreaks"
+										target="_blank"
+										rel="noreferrer noopener"
+									>
+										<Github className="size-4 mr-2" /> GitHub
+									</a>
+								</DropdownMenuItem>
+								<DropdownMenuItem asChild>
+									<a
+										href="https://openholidaysapi.org/"
+										target="_blank"
+										rel="noreferrer noopener"
+									>
+										<BookOpen className="size-4 mr-2" /> API Docs
+									</a>
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</div>
+
+					{/* Desktop icons */}
+					<div className="hidden sm:flex items-center gap-2">
+						<Button
+							asChild
+							variant="outline"
+							size="icon"
+							aria-label="Open GitHub repository"
+							title="GitHub Repository"
 						>
-							<Github className="size-5" />
-						</a>
-					</Button>
-					<Button
-						asChild
-						variant="outline"
-						size="icon"
-						aria-label="Open API documentation"
-						title="OpenHolidays API"
-					>
-						<a
-							href="https://openholidaysapi.org/"
-							target="_blank"
-							rel="noreferrer noopener"
+							<a
+								href="https://github.com/LuggaPugga/schoolbreaks"
+								target="_blank"
+								rel="noreferrer noopener"
+							>
+								<Github className="size-5" />
+							</a>
+						</Button>
+						<Button
+							asChild
+							variant="outline"
+							size="icon"
+							aria-label="Open API documentation"
+							title="OpenHolidays API"
 						>
-							<BookOpen className="size-5" />
-						</a>
-					</Button>
+							<a
+								href="https://openholidaysapi.org/"
+								target="_blank"
+								rel="noreferrer noopener"
+							>
+								<BookOpen className="size-5" />
+							</a>
+						</Button>
+					</div>
 					<ThemeToggle />
 				</div>
 			</div>

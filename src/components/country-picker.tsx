@@ -92,12 +92,14 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
 	]);
 
 	return (
-		<div className="flex items-center gap-3">
+		<div className="flex items-center gap-2 flex-wrap">
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
-					<Button variant="outline">{countryLabel}</Button>
+					<Button variant="outline" className="max-w-[65vw] sm:max-w-none truncate">
+						<span className="truncate">{countryLabel}</span>
+					</Button>
 				</DropdownMenuTrigger>
-				<DropdownMenuContent align="start" className="max-h-80 w-64">
+				<DropdownMenuContent align="start" className="max-h-80 w-64 sm:w-72">
 					{countries?.map((c) => (
 						<DropdownMenuItem
 							key={c.isoCode}
@@ -127,9 +129,11 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
 			{value.countryIsoCode ? (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant="outline">{subdivisionLabel}</Button>
+						<Button variant="outline" className="max-w-[65vw] sm:max-w-none truncate">
+							<span className="truncate">{subdivisionLabel}</span>
+						</Button>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent align="start" className="max-h-80 w-72">
+					<DropdownMenuContent align="start" className="max-h-80 w-72 sm:w-80">
 						{subdivisions?.map((s) => (
 							<DropdownMenuItem
 								key={s.code}
