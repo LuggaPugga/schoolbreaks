@@ -39,6 +39,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import EmptyState from "./empty-state";
 
 interface SchoolHolidayLite {
 	startDate?: Date | null;
@@ -558,55 +559,15 @@ export default function MainPage({
 					</div>
 				</div>
 			) : (
-				<div className="mt-8">
-					<Card className="max-w-2xl mx-auto border border-muted-foreground/10 text-left">
-						<CardContent className="py-8">
-							<div className="space-y-3">
-								<h2 className="text-lg font-semibold">No holidays found</h2>
-								<p className="text-sm text-muted-foreground">
-									{!hasCountry
-										? "Select a country to view school breaks."
-										: `No results for ${viewYear}${hasSubdivision ? " in the selected subdivision" : ""}. Try other years or adjust filters.`}
-								</p>
-								<div className="flex flex-wrap items-center gap-2 pt-2">
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={() => setViewYear((y) => y - 1)}
-									>
-										<ChevronLeft className="size-4 mr-1" /> Previous year
-									</Button>
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={() => setViewYear((y) => y + 1)}
-									>
-										Next year <ChevronRight className="size-4 ml-1" />
-									</Button>
-									{hasSubdivision && (
-										<Button
-											variant="ghost"
-											size="sm"
-											onClick={() =>
-												navigateForSelection(targetCountryIso, null)
-											}
-										>
-											Clear subdivision
-										</Button>
-									)}
-									<Button
-										variant="ghost"
-										size="sm"
-										onClick={() => setViewYear(currentYear)}
-										disabled={viewYear === currentYear}
-									>
-										<RotateCcw className="size-4 mr-1" /> This year
-									</Button>
-								</div>
-							</div>
-						</CardContent>
-					</Card>
-				</div>
+				<EmptyState
+					hasCountry={hasCountry}
+					hasSubdivision={hasSubdivision}
+					viewYear={viewYear}
+					setViewYear={setViewYear}
+					navigateForSelection={navigateForSelection}
+					currentYear={currentYear}
+					targetCountryIso={targetCountryIso}
+				/>
 			)}
 		</div>
 	);
