@@ -1,7 +1,6 @@
 import MainPage from "@/components/main-page";
 import { getLocation } from "@/lib/headers";
 import { createFileRoute } from "@tanstack/react-router";
-import { buildAbsoluteUrl } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
 	loader: async () => {
@@ -13,31 +12,20 @@ export const Route = createFileRoute("/")({
 		return { countryIsoCode, subdivisionCode };
 	},
 	component: App,
-	head: () => {
-		const title = "School Breaks";
-		const description = "Plan smarter with school holiday calendars.";
-		const url = buildAbsoluteUrl("/");
-		const jsonLd = {
-			"@context": "https://schema.org",
-			"@type": "WebPage",
-			name: title,
-			url,
-			description,
-		};
-		return {
-			meta: [
-				{ title },
-				{ name: "description", content: description },
-				{ name: "og:title", content: title },
-				{ name: "og:description", content: description },
-				{ name: "og:url", content: url },
-			],
-			links: [{ rel: "canonical", href: url }],
-			scripts: [
-				{ type: "application/ld+json", children: JSON.stringify(jsonLd) },
-			],
-		};
-	},
+	head: () => ({
+		meta: [
+			{ title: "School Breaks" },
+			{
+				name: "description",
+				content: "Plan smarter with school holiday calendars.",
+			},
+			{ name: "og:title", content: "School Breaks" },
+			{
+				name: "og:description",
+				content: "Plan smarter with school holiday calendars.",
+			},
+		],
+	}),
 });
 
 function App() {
