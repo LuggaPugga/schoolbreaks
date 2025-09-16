@@ -265,7 +265,6 @@ export default function MainPage({
 					</p>
 				</div>
 				<div className="flex items-center gap-2 mt-3 sm:mt-0 self-start sm:self-auto">
-					{/* Mobile more menu */}
 					<div className="sm:hidden">
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
@@ -285,7 +284,7 @@ export default function MainPage({
 								</DropdownMenuItem>
 								<DropdownMenuItem asChild>
 									<a
-										href="https://openholidaysapi.org/"
+										href="https://www.openholidaysapi.org/en/"
 										target="_blank"
 										rel="noreferrer noopener"
 									>
@@ -296,7 +295,6 @@ export default function MainPage({
 						</DropdownMenu>
 					</div>
 
-					{/* Desktop icons */}
 					<div className="hidden sm:flex items-center gap-2">
 						<Button
 							asChild
@@ -321,7 +319,7 @@ export default function MainPage({
 							title="OpenHolidays API"
 						>
 							<a
-								href="https://openholidaysapi.org/"
+								href="https://www.openholidaysapi.org/en/"
 								target="_blank"
 								rel="noreferrer noopener"
 							>
