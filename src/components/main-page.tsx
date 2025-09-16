@@ -1,9 +1,9 @@
+import HolidayRow, { type SchoolHolidayLite } from "@/components/holiday-row";
 import CountrySubdivisionPicker from "@/components/country-picker";
 import SettingsPicker from "@/components/settings-picker";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
 	useListCountries,
@@ -17,9 +17,6 @@ import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import {
 	compareAsc,
 	compareDesc,
-	differenceInCalendarDays,
-	format,
-	formatDistanceToNowStrict,
 	isAfter,
 	isBefore,
 	isWithinInterval,
@@ -32,7 +29,7 @@ import {
 	Ellipsis,
 	RotateCcw,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -41,13 +38,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import EmptyState from "./empty-state";
 
-interface SchoolHolidayLite {
-	startDate?: Date | null;
-	endDate?: Date | null;
-	name?: { text?: string | null }[] | null;
-	comment?: { text?: string | null }[] | null;
-	subdivisions?: { code: string }[] | null;
-}
+const SKELETON_KEYS = ["loading-1", "loading-2", "loading-3"];
+const SMALL_SCREEN_QUERY = "(max-width: 640px)";
 
 export default function MainPage({
 	country,
@@ -61,13 +53,16 @@ export default function MainPage({
 	subdivisionCode?: string | null;
 }) {
 	const [languagePreference] = useLanguagePreference();
+	const language = useMemo(
+		() => (languagePreference === "english" ? "en" : undefined),
+		[languagePreference],
+	);
 	const navigate = useNavigate();
 
 	const currentYear = useMemo(() => new Date().getFullYear(), []);
 	const [viewYear, setViewYear] = useState<number>(currentYear);
 	const start = useMemo(() => new Date(viewYear, 0, 1), [viewYear]);
 	const end = useMemo(() => new Date(viewYear, 11, 31), [viewYear]);
-	const language = languagePreference === "english" ? "en" : undefined;
 
 	const { data: countries } = useListCountries({ language });
 
@@ -85,7 +80,7 @@ export default function MainPage({
 
 	const { data: allSubdivisions } = useListSubdivisions(targetCountryIso, {
 		enabled: Boolean(targetCountryIso),
-		language: languagePreference === "english" ? "en" : undefined,
+		language,
 	});
 
 	const targetSubdivisionCode = useMemo(() => {
@@ -109,7 +104,7 @@ export default function MainPage({
 		start,
 		end,
 		targetSubdivisionCode,
-		languagePreference === "english" ? "en" : undefined,
+		language,
 		{ enabled: Boolean(targetCountryIso) },
 	);
 
@@ -140,7 +135,7 @@ export default function MainPage({
 
 	const [isSmallScreen, setIsSmallScreen] = useState(false);
 	useEffect(() => {
-		const mql = window.matchMedia("(max-width: 640px)");
+		const mql = window.matchMedia(SMALL_SCREEN_QUERY);
 		const onChange = () => setIsSmallScreen(mql.matches);
 		onChange();
 		if (typeof mql.addEventListener === "function") {
@@ -157,101 +152,54 @@ export default function MainPage({
 		};
 	}, []);
 
-	const count = sortedHolidays.length;
 	const virtualizer = useWindowVirtualizer({
-		count,
+		count: sortedHolidays.length,
 		estimateSize: () => (isSmallScreen ? 200 : 420),
 		overscan: isSmallScreen ? 6 : 10,
 		scrollMargin: listRef.current?.offsetTop ?? 0,
 	});
 
-
-	const subdivisionsByCode = useMemo(() => {
-		return new Map((allSubdivisions ?? []).map((s) => [s.code, s]));
+	const subdivisionNames = useMemo(() => {
+		return new Map(
+			(allSubdivisions ?? []).map((subdivision) => [
+				subdivision.code,
+				subdivision.name?.[0]?.text ?? subdivision.code,
+			]),
+		);
 	}, [allSubdivisions]);
 
-	function navigateForSelection(
-		nextCountryIso: string | null,
-		nextSubdivisionCode: string | null,
-	) {
-		if (!nextCountryIso) {
-			navigate({ to: "/" });
-			return;
-		}
-		const countryObj = countries?.find((c) => c.isoCode === nextCountryIso);
-		const countrySlug = countryObj
-			? normalizeSlug(countryObj.name?.[0]?.text ?? nextCountryIso)
-			: nextCountryIso.toLowerCase();
-		if (nextSubdivisionCode) {
-			const subObj = allSubdivisions?.find(
-				(s) => s.code === nextSubdivisionCode,
-			);
-			const subSlug = subObj
-				? normalizeSlug(subObj.name?.[0]?.text ?? nextSubdivisionCode)
-				: nextSubdivisionCode.toLowerCase();
+	const navigateForSelection = useCallback(
+		(nextCountryIso: string | null, nextSubdivisionCode: string | null) => {
+			if (!nextCountryIso) {
+				navigate({ to: "/" });
+				return;
+			}
+			const countryObj = countries?.find((c) => c.isoCode === nextCountryIso);
+			const countrySlug = countryObj
+				? normalizeSlug(countryObj.name?.[0]?.text ?? nextCountryIso)
+				: nextCountryIso.toLowerCase();
+			if (nextSubdivisionCode) {
+				const subObj = allSubdivisions?.find((s) => s.code === nextSubdivisionCode);
+				const subSlug = subObj
+					? normalizeSlug(subObj.name?.[0]?.text ?? nextSubdivisionCode)
+					: nextSubdivisionCode.toLowerCase();
+				navigate({
+					to: "/$country/{-$subdivision}",
+					params: { country: countrySlug, subdivision: subSlug },
+				});
+				return;
+			}
 			navigate({
 				to: "/$country/{-$subdivision}",
-				params: { country: countrySlug, subdivision: subSlug },
+				params: { country: countrySlug },
 			});
-			return;
-		}
-		navigate({
-			to: "/$country/{-$subdivision}",
-			params: { country: countrySlug },
-		});
-	}
+		},
+		[allSubdivisions, countries, navigate],
+	);
 
 	const hasCountry = Boolean(targetCountryIso);
 	const hasSubdivision = Boolean(targetSubdivisionCode);
-	const skeletonKeys = useMemo(() => ["s1", "s2", "s3"], []);
-
-	function statusOf(holiday: SchoolHolidayLite) {
-		const now = new Date();
-		if (holiday.startDate && holiday.endDate) {
-			if (
-				isWithinInterval(now, {
-					start: holiday.startDate,
-					end: holiday.endDate,
-				})
-			)
-				return "ongoing" as const;
-			if (isAfter(holiday.startDate, now)) return "upcoming" as const;
-			if (isBefore(holiday.endDate, now)) return "past" as const;
-		}
-		return "unknown" as const;
-	}
-
-	function badgeFor(status: "ongoing" | "upcoming" | "past" | "unknown") {
-		switch (status) {
-			case "ongoing":
-				return {
-					label: "Ongoing",
-					accent: "border-l-4 border-l-emerald-500",
-					badge:
-						"bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
-				};
-			case "upcoming":
-				return {
-					label: "Upcoming",
-					accent: "border-l-4 border-l-blue-500",
-					badge:
-						"bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
-				};
-			case "past":
-				return {
-					label: "Past",
-					accent: "border-l-4 border-l-slate-400",
-					badge:
-						"bg-slate-200 text-slate-700 dark:bg-slate-500/10 dark:text-slate-300",
-				};
-			default:
-				return {
-					label: "",
-					accent: "border-l-4 border-l-muted",
-					badge: "bg-muted text-muted-foreground",
-				};
-		}
-	}
+	const isBusy = (isLoading || isFetching) && hasCountry;
 
 	return (
 		<div className="text-center px-4 sm:px-8">
@@ -388,9 +336,9 @@ export default function MainPage({
 				</div>
 			</div>
 
-			{(isLoading || isFetching) && hasCountry ? (
+			{isBusy ? (
 				<div className="space-y-4">
-					{skeletonKeys.map((key) => (
+					{SKELETON_KEYS.map((key) => (
 						<Card
 							key={key}
 							className="border border-muted-foreground/10 max-w-full"
@@ -414,7 +362,7 @@ export default function MainPage({
 					))}
 				</div>
 			) : sortedHolidays.length > 0 ? (
-				<div ref={listRef} className=" w-full">
+				<div ref={listRef} className="w-full">
 					<div
 						style={{
 							height: `${virtualizer.getTotalSize()}px`,
@@ -422,138 +370,15 @@ export default function MainPage({
 							position: "relative",
 						}}
 					>
-						{virtualizer.getVirtualItems().map((item) => {
-							const holiday = sortedHolidays[item.index] as SchoolHolidayLite;
-							const formattedRange =
-								holiday.startDate && holiday.endDate
-									? `${format(holiday.startDate, "EEE, MMM d, yyyy")} – ${format(holiday.endDate, "EEE, MMM d, yyyy")}`
-									: null;
-							const daysCount =
-								holiday.startDate && holiday.endDate
-									? differenceInCalendarDays(
-											holiday.endDate,
-											holiday.startDate,
-										) + 1
-									: null;
-							const status = statusOf(holiday);
-							const styles = badgeFor(status);
-							const meta = (() => {
-								if (!holiday.startDate || !holiday.endDate) return null;
-								if (status === "ongoing") {
-									return `Ends in ${formatDistanceToNowStrict(holiday.endDate, { addSuffix: false })}`;
-								}
-								if (status === "upcoming") {
-									return `Starts in ${formatDistanceToNowStrict(holiday.startDate, { addSuffix: false })}`;
-								}
-								if (status === "past") {
-									return `Ended ${formatDistanceToNowStrict(holiday.endDate, { addSuffix: true })}`;
-								}
-								return null;
-							})();
-							return (
-								<div
-									key={`${item.key}-${isSmallScreen ? 'sm' : 'lg'}`}
-									ref={virtualizer.measureElement}
-									style={{
-										position: "absolute",
-										top: 0,
-										left: 0,
-										width: "100%",
-										transform: `translateY(${item.start - (virtualizer.options.scrollMargin ?? 0)}px)`,
-									}}
-								>
-									<Card
-										className={`transition-shadow hover:shadow-lg border border-muted-foreground/10 max-w-full ${styles.accent}`}
-									>
-										<CardContent>
-											<div className="flex flex-col md:flex-row gap-6">
-												<div className="flex-1 space-y-3 text-left">
-													<div className="flex items-start justify-between gap-3">
-														<CardTitle className="text-2xl font-bold text-primary tracking-tight">
-															{holiday.name?.[0]?.text ?? "Unnamed Holiday"}
-														</CardTitle>
-														{styles.label && (
-															<span
-																className={`px-2 py-0.5 rounded text-xs font-medium ${styles.badge}`}
-															>
-																{styles.label}
-															</span>
-														)}
-													</div>
-													{holiday.comment?.[0]?.text && (
-														<p className="text-sm text-muted-foreground">
-															{holiday.comment[0].text}
-														</p>
-													)}
-													{formattedRange && (
-														<div className="flex flex-wrap items-center gap-2">
-															<span className="inline-flex items-center rounded-md bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
-																{formattedRange}
-															</span>
-															{daysCount && (
-																<span className="inline-flex items-center rounded-md bg-secondary/70 px-2 py-0.5 text-xs font-medium text-secondary-foreground">
-																	{daysCount} days
-																</span>
-															)}
-															{meta && (
-																<span className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
-																	{meta}
-																</span>
-															)}
-														</div>
-													)}
-													<div className="flex flex-wrap gap-2">
-														{holiday.subdivisions?.map((subdivision) => {
-															const full = subdivisionsByCode.get(
-																subdivision.code,
-															);
-															const display =
-																full?.name?.[0]?.text ?? subdivision.code;
-															return (
-																<div
-																	key={subdivision.code}
-																	className="inline-flex items-center gap-1.5 text-xs text-secondary-foreground bg-secondary/70 px-2 py-0.5 rounded"
-																>
-																	<span className="font-medium">{display}</span>
-																	<span className="text-muted-foreground">
-																		({subdivision.code})
-																	</span>
-																</div>
-															);
-														})}
-													</div>
-												</div>
-												{holiday.startDate && holiday.endDate && (
-													<div className="hidden sm:block">
-														<Calendar
-															mode="range"
-															startMonth={holiday.startDate}
-															endMonth={holiday.endDate}
-															defaultMonth={holiday.startDate}
-															ISOWeek
-															selected={{
-																from: holiday.startDate,
-																to: holiday.endDate,
-															}}
-															fixedWeeks
-															numberOfMonths={
-																differenceInCalendarDays(
-																	holiday.endDate,
-																	holiday.startDate,
-																) > 30
-																	? 2
-																	: 1
-															}
-															className="rounded-md border"
-														/>
-													</div>
-												)}
-											</div>
-										</CardContent>
-									</Card>
-								</div>
-							);
-						})}
+						{virtualizer.getVirtualItems().map((virtualItem) => (
+							<HolidayRow
+								key={`${virtualItem.key}-${isSmallScreen ? "sm" : "lg"}`}
+								holiday={sortedHolidays[virtualItem.index] as SchoolHolidayLite}
+								virtualItem={virtualItem}
+								virtualizer={virtualizer}
+								subdivisionNames={subdivisionNames}
+							/>
+						))}
 					</div>
 				</div>
 			) : (
