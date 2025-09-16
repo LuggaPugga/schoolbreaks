@@ -99,7 +99,10 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
 						<span className="truncate">{countryLabel}</span>
 					</Button>
 				</DropdownMenuTrigger>
-				<DropdownMenuContent align="start" className="max-h-80 w-64 sm:w-72">
+				<DropdownMenuContent
+					align="start"
+					className="max-h-80 w-64 sm:w-72 overflow-y-auto"
+				>
 					{countries?.map((c) => (
 						<DropdownMenuItem
 							key={c.isoCode}
@@ -133,7 +136,10 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
 							<span className="truncate">{subdivisionLabel}</span>
 						</Button>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent align="start" className="max-h-80 w-72 sm:w-80">
+					<DropdownMenuContent
+						align="start"
+						className="max-h-80 w-72 sm:w-80 overflow-y-auto"
+					>
 						{subdivisions?.map((s) => (
 							<DropdownMenuItem
 								key={s.code}
