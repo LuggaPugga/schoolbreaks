@@ -84,7 +84,7 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
                         match.shortName ??
                         value.subdivisionCode;
 
-                return `${bestAvailableName} [${match.code}]`;
+                return bestAvailableName;
         }, [
                 subdivisions,
                 value.subdivisionCode,
@@ -165,7 +165,7 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
                                                                                 s.name?.[0]?.text ??
                                                                                 s.shortName ??
                                                                                 s.code;
-                                                                        return `${bestAvailableName} [${s.code}]`;
+                                                                        return bestAvailableName;
                                                                 })()}
                                                         </DropdownMenuItem>
                                                 ))}
