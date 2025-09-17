@@ -63,33 +63,34 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
 		);
 	}, [countries, value.countryIsoCode, value.languageMode]);
 
-	const subdivisionLabel = useMemo(() => {
-		if (!value.subdivisionCode) return "Select subdivision";
-		const match = subdivisions?.find((s) => s.code === value.subdivisionCode);
-		if (!match) return value.subdivisionCode;
-		const preferredLangs: string[] =
-			value.languageMode === "native"
-				? selectedCountryObj?.officialLanguages?.length
-					? selectedCountryObj.officialLanguages
-					: ["en"]
-				: ["en"];
-		const nameByPreferred = match.name?.find((n) =>
-			preferredLangs.some(
-				(l) => n.language?.toLowerCase?.() === l.toLowerCase?.(),
-			),
-		);
-		return (
-			match.shortName ??
-			nameByPreferred?.text ??
-			match.name?.[0]?.text ??
-			value.subdivisionCode
-		);
-	}, [
-		subdivisions,
-		value.subdivisionCode,
-		value.languageMode,
-		selectedCountryObj,
-	]);
+        const subdivisionLabel = useMemo(() => {
+                if (!value.subdivisionCode) return "Select subdivision";
+                const match = subdivisions?.find((s) => s.code === value.subdivisionCode);
+                if (!match) return value.subdivisionCode;
+                const preferredLangs: string[] =
+                        value.languageMode === "native"
+                                ? selectedCountryObj?.officialLanguages?.length
+                                        ? selectedCountryObj.officialLanguages
+                                        : ["en"]
+                                : ["en"];
+                const nameByPreferred = match.name?.find((n) =>
+                        preferredLangs.some(
+                                (l) => n.language?.toLowerCase?.() === l.toLowerCase?.(),
+                        ),
+                );
+                const bestAvailableName =
+                        nameByPreferred?.text ??
+                        match.name?.[0]?.text ??
+                        match.shortName ??
+                        value.subdivisionCode;
+
+                return `${bestAvailableName} [${match.code}]`;
+        }, [
+                subdivisions,
+                value.subdivisionCode,
+                value.languageMode,
+                selectedCountryObj,
+        ]);
 
 	return (
 		<div className="flex items-center gap-2 flex-wrap">
@@ -140,29 +141,34 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
 						align="start"
 						className="max-h-80 w-72 sm:w-80 overflow-y-auto"
 					>
-						{subdivisions?.map((s) => (
-							<DropdownMenuItem
-								key={s.code}
-								onSelect={() => {
-									emit({ subdivisionCode: s.code });
-								}}
-							>
-								{(() => {
-									const preferredLangs: string[] =
-										value.languageMode === "native"
-											? selectedCountryObj?.officialLanguages?.length
-												? selectedCountryObj.officialLanguages
-												: ["en"]
-											: ["en"];
-									const nameByPreferred = s.name?.find((n) =>
-										preferredLangs.some(
-											(l) => n.language?.toLowerCase?.() === l.toLowerCase?.(),
-										),
-									);
-									return nameByPreferred?.text ?? s.name?.[0]?.text ?? s.code;
-								})()}
-							</DropdownMenuItem>
-						))}
+                                                {subdivisions?.map((s) => (
+                                                        <DropdownMenuItem
+                                                                key={s.code}
+                                                                onSelect={() => {
+                                                                        emit({ subdivisionCode: s.code });
+                                                                }}
+                                                        >
+                                                                {(() => {
+                                                                        const preferredLangs: string[] =
+                                                                                value.languageMode === "native"
+                                                                                        ? selectedCountryObj?.officialLanguages?.length
+                                                                                                ? selectedCountryObj.officialLanguages
+                                                                                                : ["en"]
+                                                                                        : ["en"];
+                                                                        const nameByPreferred = s.name?.find((n) =>
+                                                                                preferredLangs.some(
+                                                                                        (l) => n.language?.toLowerCase?.() === l.toLowerCase?.(),
+                                                                                ),
+                                                                        );
+                                                                        const bestAvailableName =
+                                                                                nameByPreferred?.text ??
+                                                                                s.name?.[0]?.text ??
+                                                                                s.shortName ??
+                                                                                s.code;
+                                                                        return `${bestAvailableName} [${s.code}]`;
+                                                                })()}
+                                                        </DropdownMenuItem>
+                                                ))}
 					</DropdownMenuContent>
 				</DropdownMenu>
 			) : null}
