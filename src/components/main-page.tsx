@@ -15,11 +15,7 @@ import { normalizeSlug } from "@/lib/utils";
 import { useNavigate } from "@tanstack/react-router";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import {
-	compareAsc,
-	compareDesc,
-	isAfter,
-	isBefore,
-	isWithinInterval,
+	compareAsc, isBefore
 } from "date-fns";
 import {
 	BookOpen,
@@ -110,25 +106,22 @@ export default function MainPage({
 
 	const sortedHolidays = useMemo(() => {
 		if (!Array.isArray(holidays)) return [];
+		
 		const now = new Date();
-		const dated = holidays.filter((h) => h.startDate && h.endDate);
-		const undated = holidays.filter((h) => !h.startDate || !h.endDate);
-		const ongoing = dated
-			.filter((h) =>
-				isWithinInterval(now, {
-					start: h.startDate as Date,
-					end: h.endDate as Date,
-				}),
-			)
-			.sort((a, b) => compareAsc(a.endDate as Date, b.endDate as Date));
-		const upcoming = dated
-			.filter((h) => isAfter(h.startDate as Date, now))
-			.sort((a, b) => compareAsc(a.startDate as Date, b.startDate as Date));
-		const past = dated
-			.filter((h) => isBefore(h.endDate as Date, now))
-			.sort((a, b) => compareDesc(a.endDate as Date, b.endDate as Date));
 		const includePast = viewYear !== currentYear;
-		return [...ongoing, ...upcoming, ...(includePast ? past : []), ...undated];
+		
+		return holidays
+			.filter((h) => {
+				if (!h.startDate || !h.endDate) return true;
+				if (!includePast && isBefore(h.endDate as Date, now)) return false;
+				return true;
+			})
+			.sort((a, b) => {
+				if (!a.startDate || !a.endDate) return 1;
+				if (!b.startDate || !b.endDate) return -1;
+				
+				return compareAsc(a.startDate as Date, b.startDate as Date);
+			});
 	}, [holidays, viewYear, currentYear]);
 
 	const listRef = useRef<HTMLDivElement | null>(null);
