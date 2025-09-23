@@ -11,6 +11,7 @@ import {
 	useSchoolHolidays,
 } from "@/lib/use-holidays";
 import useLanguagePreference from "@/lib/use-language";
+import { preferenceToApiLanguage } from "@/lib/language";
 import { normalizeSlug } from "@/lib/utils";
 import { useNavigate } from "@tanstack/react-router";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
@@ -50,7 +51,7 @@ export default function MainPage({
 }) {
 	const [languagePreference] = useLanguagePreference();
 	const language = useMemo(
-		() => (languagePreference === "english" ? "en" : undefined),
+		() => preferenceToApiLanguage(languagePreference),
 		[languagePreference],
 	);
 	const navigate = useNavigate();

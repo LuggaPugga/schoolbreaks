@@ -1,7 +1,6 @@
 "use client";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-
-type LanguagePreference = "english" | "native";
+import type { LanguagePreference } from "./language";
 
 const LanguageContext = createContext<{
 	language: LanguagePreference;

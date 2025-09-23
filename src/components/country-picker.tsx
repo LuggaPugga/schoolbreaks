@@ -6,6 +6,11 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useListCountries, useListSubdivisions } from "@/lib/use-holidays";
+import {
+	preferredLanguagesForDisplay,
+	preferenceToApiLanguage,
+	pickBestLocalizedText,
+} from "@/lib/language";
 import { useMemo } from "react";
 
 export interface CountrySubdivisionSelection {
@@ -20,14 +25,14 @@ interface Props {
 }
 
 export default function CountrySubdivisionPicker({ value, onChange }: Props) {
-	const { data: countries } = useListCountries({
-		language: value.languageMode === "english" ? "en" : undefined,
-	});
+    const { data: countries } = useListCountries({
+        language: preferenceToApiLanguage(value.languageMode),
+    });
 
-	const { data: subdivisions } = useListSubdivisions(value.countryIsoCode, {
-		enabled: Boolean(value.countryIsoCode),
-		language: value.languageMode === "english" ? "en" : undefined,
-	});
+    const { data: subdivisions } = useListSubdivisions(value.countryIsoCode, {
+        enabled: Boolean(value.countryIsoCode),
+        language: preferenceToApiLanguage(value.languageMode),
+    });
 
 	const selectedCountryObj = useMemo(
 		() => countries?.find((c) => c.isoCode === value.countryIsoCode) ?? null,
@@ -43,48 +48,27 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
 		onChange?.(newValue);
 	}
 
-	const countryLabel = useMemo(() => {
-		if (!value.countryIsoCode) return "Select country";
-		const match = countries?.find((c) => c.isoCode === value.countryIsoCode);
-		if (!match) return value.countryIsoCode;
-		const preferredLangs: string[] =
-			value.languageMode === "native"
-				? match.officialLanguages?.length
-					? match.officialLanguages
-					: ["en"]
-				: ["en"];
-		const nameByPreferred = match.name?.find((n) =>
-			preferredLangs.some(
-				(l) => n.language?.toLowerCase?.() === l.toLowerCase?.(),
-			),
-		);
-		return (
-			nameByPreferred?.text ?? match.name?.[0]?.text ?? value.countryIsoCode
-		);
-	}, [countries, value.countryIsoCode, value.languageMode]);
-
-        const subdivisionLabel = useMemo(() => {
-                if (!value.subdivisionCode) return "Select subdivision";
-                const match = subdivisions?.find((s) => s.code === value.subdivisionCode);
-                if (!match) return value.subdivisionCode;
-                
-                const preferredLangs = value.languageMode === "native" 
-                        ? selectedCountryObj?.officialLanguages?.length ? selectedCountryObj.officialLanguages : ["en"]
-                        : ["en"];
-                
-                const nameByPreferred = match.name?.find((n) =>
-                        preferredLangs.some(l => n.language?.toLowerCase() === l.toLowerCase())
-                );
-                
-                return nameByPreferred?.text ?? match.name?.[0]?.text ?? match.shortName ?? value.subdivisionCode;
-        }, [subdivisions, value.subdivisionCode, value.languageMode, selectedCountryObj]);
+    
 
 	return (
 		<div className="flex items-center gap-2 flex-wrap">
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<Button variant="outline" className="max-w-[65vw] sm:max-w-none truncate">
-						<span className="truncate">{countryLabel}</span>
+						<span className="truncate">
+							{(() => {
+								if (!value.countryIsoCode) return "Select country";
+								const match = countries?.find((c) => c.isoCode === value.countryIsoCode);
+								if (!match) return value.countryIsoCode;
+								const pref = preferredLanguagesForDisplay(
+									value.languageMode,
+									match.officialLanguages,
+								);
+								return (
+									pickBestLocalizedText(match.name, pref) ?? value.countryIsoCode
+								);
+							})()}
+						</span>
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent
@@ -98,20 +82,15 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
 								emit({ countryIsoCode: c.isoCode, subdivisionCode: null });
 							}}
 						>
-							{(() => {
-								const preferredLangs: string[] =
-									value.languageMode === "native"
-										? c.officialLanguages?.length
-											? c.officialLanguages
-											: ["en"]
-										: ["en"];
-								const nameByPreferred = c.name?.find((n) =>
-									preferredLangs.some(
-										(l) => n.language?.toLowerCase?.() === l.toLowerCase?.(),
-									),
-								);
-								return nameByPreferred?.text ?? c.name?.[0]?.text ?? c.isoCode;
-							})()}
+                            {(() => {
+                                const pref = preferredLanguagesForDisplay(
+                                    value.languageMode,
+                                    c.officialLanguages,
+                                );
+                                return (
+                                    pickBestLocalizedText(c.name, pref) ?? c.isoCode
+                                );
+                            })()}
 						</DropdownMenuItem>
 					))}
 				</DropdownMenuContent>
@@ -121,7 +100,20 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="outline" className="max-w-[65vw] sm:max-w-none truncate">
-							<span className="truncate">{subdivisionLabel}</span>
+							<span className="truncate">
+								{(() => {
+									if (!value.subdivisionCode) return "Select subdivision";
+									const match = subdivisions?.find((s) => s.code === value.subdivisionCode);
+									if (!match) return value.subdivisionCode;
+									const pref = preferredLanguagesForDisplay(
+										value.languageMode,
+										selectedCountryObj?.officialLanguages,
+									);
+									return (
+										pickBestLocalizedText(match.name, pref) ?? match.shortName ?? value.subdivisionCode
+									);
+								})()}
+							</span>
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
@@ -135,25 +127,15 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
                                                                         emit({ subdivisionCode: s.code });
                                                                 }}
                                                         >
-                                                                {(() => {
-                                                                        const preferredLangs: string[] =
-                                                                                value.languageMode === "native"
-                                                                                        ? selectedCountryObj?.officialLanguages?.length
-                                                                                                ? selectedCountryObj.officialLanguages
-                                                                                                : ["en"]
-                                                                                        : ["en"];
-                                                                        const nameByPreferred = s.name?.find((n) =>
-                                                                                preferredLangs.some(
-                                                                                        (l) => n.language?.toLowerCase?.() === l.toLowerCase?.(),
-                                                                                ),
-                                                                        );
-                                                                        const bestAvailableName =
-                                                                                nameByPreferred?.text ??
-                                                                                s.name?.[0]?.text ??
-                                                                                s.shortName ??
-                                                                                s.code;
-                                                                        return bestAvailableName;
-                                                                })()}
+                                        {(() => {
+                                                const pref = preferredLanguagesForDisplay(
+                                                    value.languageMode,
+                                                    selectedCountryObj?.officialLanguages,
+                                                );
+                                                return (
+                                                    pickBestLocalizedText(s.name, pref) ?? s.shortName ?? s.code
+                                                );
+                                        })()}
                                                         </DropdownMenuItem>
                                                 ))}
 					</DropdownMenuContent>
