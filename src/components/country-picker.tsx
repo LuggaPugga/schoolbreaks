@@ -67,30 +67,17 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
                 if (!value.subdivisionCode) return "Select subdivision";
                 const match = subdivisions?.find((s) => s.code === value.subdivisionCode);
                 if (!match) return value.subdivisionCode;
-                const preferredLangs: string[] =
-                        value.languageMode === "native"
-                                ? selectedCountryObj?.officialLanguages?.length
-                                        ? selectedCountryObj.officialLanguages
-                                        : ["en"]
-                                : ["en"];
+                
+                const preferredLangs = value.languageMode === "native" 
+                        ? selectedCountryObj?.officialLanguages?.length ? selectedCountryObj.officialLanguages : ["en"]
+                        : ["en"];
+                
                 const nameByPreferred = match.name?.find((n) =>
-                        preferredLangs.some(
-                                (l) => n.language?.toLowerCase?.() === l.toLowerCase?.(),
-                        ),
+                        preferredLangs.some(l => n.language?.toLowerCase() === l.toLowerCase())
                 );
-                const bestAvailableName =
-                        nameByPreferred?.text ??
-                        match.name?.[0]?.text ??
-                        match.shortName ??
-                        value.subdivisionCode;
-
-                return bestAvailableName;
-        }, [
-                subdivisions,
-                value.subdivisionCode,
-                value.languageMode,
-                selectedCountryObj,
-        ]);
+                
+                return nameByPreferred?.text ?? match.name?.[0]?.text ?? match.shortName ?? value.subdivisionCode;
+        }, [subdivisions, value.subdivisionCode, value.languageMode, selectedCountryObj]);
 
 	return (
 		<div className="flex items-center gap-2 flex-wrap">
