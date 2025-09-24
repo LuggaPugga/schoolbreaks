@@ -8,15 +8,16 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createServerRootRoute } from '@tanstack/react-start/server'
-
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CountryChar123SubdivisionChar125RouteImport } from './routes/$country.{-$subdivision}'
-import { ServerRoute as SitemapDotxmlServerRouteImport } from './routes/sitemap[.]xml'
 
-const rootServerRouteImport = createServerRootRoute()
-
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -28,61 +29,46 @@ const CountryChar123SubdivisionChar125Route =
     path: '/$country/{-$subdivision}',
     getParentRoute: () => rootRouteImport,
   } as any)
-const SitemapDotxmlServerRoute = SitemapDotxmlServerRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootServerRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$country/{-$subdivision}': typeof CountryChar123SubdivisionChar125Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$country/{-$subdivision}': typeof CountryChar123SubdivisionChar125Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$country/{-$subdivision}': typeof CountryChar123SubdivisionChar125Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$country/{-$subdivision}'
+  fullPaths: '/' | '/sitemap.xml' | '/$country/{-$subdivision}'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$country/{-$subdivision}'
-  id: '__root__' | '/' | '/$country/{-$subdivision}'
+  to: '/' | '/sitemap.xml' | '/$country/{-$subdivision}'
+  id: '__root__' | '/' | '/sitemap.xml' | '/$country/{-$subdivision}'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   CountryChar123SubdivisionChar125Route: typeof CountryChar123SubdivisionChar125Route
-}
-export interface FileServerRoutesByFullPath {
-  '/sitemap.xml': typeof SitemapDotxmlServerRoute
-}
-export interface FileServerRoutesByTo {
-  '/sitemap.xml': typeof SitemapDotxmlServerRoute
-}
-export interface FileServerRoutesById {
-  __root__: typeof rootServerRouteImport
-  '/sitemap.xml': typeof SitemapDotxmlServerRoute
-}
-export interface FileServerRouteTypes {
-  fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: '/sitemap.xml'
-  fileServerRoutesByTo: FileServerRoutesByTo
-  to: '/sitemap.xml'
-  id: '__root__' | '/sitemap.xml'
-  fileServerRoutesById: FileServerRoutesById
-}
-export interface RootServerRouteChildren {
-  SitemapDotxmlServerRoute: typeof SitemapDotxmlServerRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -99,28 +85,20 @@ declare module '@tanstack/react-router' {
     }
   }
 }
-declare module '@tanstack/react-start/server' {
-  interface ServerFileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlServerRouteImport
-      parentRoute: typeof rootServerRouteImport
-    }
-  }
-}
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   CountryChar123SubdivisionChar125Route: CountryChar123SubdivisionChar125Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-const rootServerRouteChildren: RootServerRouteChildren = {
-  SitemapDotxmlServerRoute: SitemapDotxmlServerRoute,
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
 }
-export const serverRouteTree = rootServerRouteImport
-  ._addFileChildren(rootServerRouteChildren)
-  ._addFileTypes<FileServerRouteTypes>()

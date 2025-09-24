@@ -1,13 +1,17 @@
 import { getSitemap } from '@/lib/sitemap'
-import { createServerFileRoute } from '@tanstack/react-start/server'
+import { createFileRoute } from '@tanstack/react-router'
 
-export const ServerRoute = createServerFileRoute('/sitemap.xml').methods({
-  GET: async () => {
-    return new Response(await getSitemap(), {
-      headers: {
-        'Content-Type': 'application/xml',
-        'Cache-Control': 'public, max-age=604800',
+export const Route = createFileRoute('/sitemap.xml')({
+  server: {
+    handlers: {
+      GET: async () => {
+        return new Response(await getSitemap(), {
+          headers: {
+            'Content-Type': 'application/xml',
+            'Cache-Control': 'public, max-age=604800',
+          },
+        })
       },
-    })
+    },
   },
 })
