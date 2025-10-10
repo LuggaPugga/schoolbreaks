@@ -9,6 +9,7 @@ import appCss from "../styles.css?url";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/lib/use-language";
+import Footer from "@/components/footer";
 import type { QueryClient } from "@tanstack/react-query";
 
 interface MyRouterContext {
@@ -62,7 +63,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<head>
 				<HeadContent />
 			</head>
-			<body>
+			<body className="flex flex-col min-h-screen">
 				<LanguageProvider>
 					<ThemeProvider
 						themes={["light", "dark"]}
@@ -70,7 +71,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						enableSystem
 						storageKey="theme"
 					>
-						<main className="mx-auto max-w-5xl px-4">{children}</main>
+						<div className="flex-1">
+							<main className="mx-auto max-w-5xl px-4">{children}</main>
+						</div>
+						<Footer />
 					</ThemeProvider>
 				</LanguageProvider>
 				<Scripts />

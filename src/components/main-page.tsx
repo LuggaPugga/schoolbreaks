@@ -19,20 +19,10 @@ import {
 	compareAsc, isBefore
 } from "date-fns";
 import {
-	BookOpen,
 	ChevronLeft,
-	ChevronRight,
-	Github,
-	Ellipsis,
-	RotateCcw,
+	ChevronRight
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import EmptyState from "./empty-state";
 
 const SKELETON_KEYS = ["loading-1", "loading-2", "loading-3"];
@@ -188,136 +178,70 @@ export default function MainPage({
 	const isBusy = (isLoading || isFetching) && hasCountry;
 
 	return (
-		<div className="text-center px-4 sm:px-8">
-			<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-8 sm:pt-14 pb-4 sm:pb-8">
-				<div className="text-left">
-					<h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-primary">
-						School Breaks
-					</h1>
-					<p className="text-sm text-muted-foreground mt-1">
-						Plan smarter with school holiday calendars
-					</p>
-				</div>
-				<div className="flex items-center gap-2 mt-3 sm:mt-0 self-start sm:self-auto">
-					<div className="sm:hidden">
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button variant="outline" size="icon" aria-label="More actions">
-									<Ellipsis className="size-5" />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end" className="w-48">
-								<DropdownMenuItem asChild>
-									<a
-										href="https://github.com/LuggaPugga/schoolbreaks"
-										target="_blank"
-										rel="noreferrer noopener"
-									>
-										<Github className="size-4 mr-2" /> GitHub
-									</a>
-								</DropdownMenuItem>
-								<DropdownMenuItem asChild>
-									<a
-										href="https://www.openholidaysapi.org/en/"
-										target="_blank"
-										rel="noreferrer noopener"
-									>
-										<BookOpen className="size-4 mr-2" /> API Docs
-									</a>
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
+		<div className="text-center px-3 sm:px-6">
+			<header className="pt-6 sm:pt-10 pb-6 sm:pb-8">
+				<div className="flex items-center justify-between gap-4">
+					<div className="text-left flex-1">
+						<h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-primary">
+							School Breaks
+						</h1>
+						<p className="text-xs sm:text-sm text-muted-foreground mt-1">
+							Plan smarter with school holiday calendars
+						</p>
 					</div>
-
-					<div className="hidden sm:flex items-center gap-2">
-						<Button
-							asChild
-							variant="outline"
-							size="icon"
-							aria-label="Open GitHub repository"
-							title="GitHub Repository"
-						>
-							<a
-								href="https://github.com/LuggaPugga/schoolbreaks"
-								target="_blank"
-								rel="noreferrer noopener"
-							>
-								<Github className="size-5" />
-							</a>
-						</Button>
-						<Button
-							asChild
-							variant="outline"
-							size="icon"
-							aria-label="Open API documentation"
-							title="OpenHolidays API"
-						>
-							<a
-								href="https://www.openholidaysapi.org/en/"
-								target="_blank"
-								rel="noreferrer noopener"
-							>
-								<BookOpen className="size-5" />
-							</a>
-						</Button>
+					<div className="flex items-center gap-2">
+						<SettingsPicker />
+						<ThemeToggle />
 					</div>
-					<ThemeToggle />
 				</div>
-			</div>
+			</header>
 
-			<div className="flex flex-col sm:flex-row items-stretch sm:items-start justify-between gap-3 sm:gap-4 mb-6">
-				<CountrySubdivisionPicker
-					value={{
-						countryIsoCode: targetCountryIso,
-						subdivisionCode: targetSubdivisionCode,
-						languageMode: languagePreference,
-					}}
-					onChange={(next) => {
-						const countryChanged = next.countryIsoCode !== targetCountryIso;
-						const nextCountryIso = next.countryIsoCode ?? targetCountryIso;
-						const nextSubdivision = countryChanged
-							? null
-							: next.subdivisionCode;
-						navigateForSelection(nextCountryIso, nextSubdivision);
-					}}
-				/>
-				<div className="flex items-center gap-2 sm:self-auto self-end flex-wrap justify-end">
-					<SettingsPicker />
-					<div className="flex items-center gap-1 ml-3">
-						<span className="text-sm text-muted-foreground mr-1 hidden sm:inline">
-							Year
-						</span>
-						<Button
-							variant="outline"
-							size="icon"
-							aria-label="Previous year"
-							onClick={() => setViewYear((y) => y - 1)}
-							disabled={isFetching}
-						>
-							<ChevronLeft className="size-4" />
-						</Button>
-						<span className="min-w-12 text-sm font-medium tabular-nums">
-							{viewYear}
-						</span>
-						<Button
-							variant="outline"
-							size="icon"
-							aria-label="Next year"
-							onClick={() => setViewYear((y) => y + 1)}
-							disabled={isFetching}
-						>
-							<ChevronRight className="size-4" />
-						</Button>
-						<Button
-							variant="ghost"
-							size="icon"
-							aria-label="Reset to current year"
-							onClick={() => setViewYear(currentYear)}
-							title="Reset to current year"
-							disabled={isFetching || viewYear === currentYear}
-						>
-							<RotateCcw className="size-4" />
-						</Button>
+			<div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 -mx-3 sm:-mx-6 px-3 sm:px-6 py-4 mb-6 border-b border-border/40">
+				<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+					<div className="flex-1">
+						<CountrySubdivisionPicker
+							value={{
+								countryIsoCode: targetCountryIso,
+								subdivisionCode: targetSubdivisionCode,
+								languageMode: languagePreference,
+							}}
+							onChange={(next) => {
+								const countryChanged = next.countryIsoCode !== targetCountryIso;
+								const nextCountryIso = next.countryIsoCode ?? targetCountryIso;
+								const nextSubdivision = countryChanged
+									? null
+									: next.subdivisionCode;
+								navigateForSelection(nextCountryIso, nextSubdivision);
+							}}
+						/>
+					</div>
+					
+					<div className="flex items-center justify-between sm:justify-end gap-2 bg-muted/50 rounded-lg px-3 py-2">
+						<div className="flex items-center gap-1">
+							<Button
+								variant="ghost"
+								size="icon"
+								className="h-8 w-8"
+								aria-label="Previous year"
+								onClick={() => setViewYear((y) => y - 1)}
+								disabled={isFetching}
+							>
+								<ChevronLeft className="size-4" />
+							</Button>
+							<span className="min-w-[3rem] text-center text-sm font-semibold tabular-nums">
+								{viewYear}
+							</span>
+							<Button
+								variant="ghost"
+								size="icon"
+								className="h-8 w-8"
+								aria-label="Next year"
+								onClick={() => setViewYear((y) => y + 1)}
+								disabled={isFetching}
+							>
+								<ChevronRight className="size-4" />
+							</Button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -327,20 +251,27 @@ export default function MainPage({
 					{SKELETON_KEYS.map((key) => (
 						<Card
 							key={key}
-							className="border border-muted-foreground/10 max-w-full"
+							className="border border-muted-foreground/20 max-w-full"
 						>
-							<CardContent className="py-6">
-								<div className="flex flex-col md:flex-row gap-6">
-									<div className="flex-1 space-y-3 text-left">
-										<Skeleton className="h-6 w-2/3" />
-										<Skeleton className="h-4 w-1/2" />
+							<CardContent className="p-4 sm:p-6">
+								<div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+									<div className="flex-1 space-y-4 text-left">
+										<div className="flex items-start justify-between gap-3">
+											<Skeleton className="h-7 sm:h-8 w-3/4" />
+											<Skeleton className="h-6 w-20 rounded-full" />
+										</div>
+										<Skeleton className="h-4 w-full" />
+										<div className="space-y-2">
+											<Skeleton className="h-5 w-full" />
+											<Skeleton className="h-4 w-32" />
+										</div>
 										<div className="flex gap-2">
-											<Skeleton className="h-5 w-24" />
-											<Skeleton className="h-5 w-24" />
+											<Skeleton className="h-6 w-24 rounded-md" />
+											<Skeleton className="h-6 w-24 rounded-md" />
 										</div>
 									</div>
-									<div className="hidden sm:block">
-										<Skeleton className="h-64 w-[320px]" />
+									<div className="hidden lg:block">
+										<Skeleton className="h-64 w-[320px] rounded-lg" />
 									</div>
 								</div>
 							</CardContent>
