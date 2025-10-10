@@ -11,7 +11,6 @@ import {
 	preferenceToApiLanguage,
 	pickBestLocalizedText,
 } from "@/lib/language";
-import { useMemo } from "react";
 
 export interface CountrySubdivisionSelection {
 	countryIsoCode: string | null;
@@ -34,10 +33,7 @@ export default function CountrySubdivisionPicker({ value, onChange }: Props) {
         language: preferenceToApiLanguage(value.languageMode),
     });
 
-	const selectedCountryObj = useMemo(
-		() => countries?.find((c) => c.isoCode === value.countryIsoCode) ?? null,
-		[countries, value.countryIsoCode],
-	);
+	const selectedCountryObj = countries?.find((c) => c.isoCode === value.countryIsoCode) ?? null;
 
 	function emit(next: Partial<CountrySubdivisionSelection>) {
 		const newValue: CountrySubdivisionSelection = {

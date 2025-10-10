@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { LanguagePreference } from "./language";
 
 const LanguageContext = createContext<{
@@ -30,7 +30,7 @@ export function LanguageProvider({
 		}
 	}, [language, isInitialized]);
 
-	const value = useMemo(() => ({ language, setLanguage }), [language]);
+	const value = { language, setLanguage };
 
 	return (
 		<LanguageContext.Provider value={value}>

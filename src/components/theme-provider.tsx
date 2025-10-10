@@ -87,7 +87,7 @@ const Theme = ({
 
 	// apply selected theme function (light, dark, system)
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	const applyTheme = React.useCallback((theme: string | undefined) => {
+	const applyTheme = (theme: string | undefined) => {
 		let resolved = theme;
 		if (!resolved) return;
 
@@ -126,11 +126,11 @@ const Theme = ({
 		}
 
 		enable?.();
-	}, []);
+	};
 
 	// Set theme state and save to local storage
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	const setTheme = React.useCallback(
+	const setTheme = 
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		(value: any) => {
 			const newTheme = typeof value === "function" ? value(theme) : value;
@@ -140,23 +140,16 @@ const Theme = ({
 			try {
 				localStorage.setItem(storageKey, newTheme);
 			} catch (e) {
-				// Unsupported
-			}
-		},
-		[theme],
-	);
+			// Unsupported
+		}
+	};
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	const handleMediaQuery = React.useCallback(
-		(e: MediaQueryListEvent | MediaQueryList) => {
-			const resolved = getSystemTheme(e);
-
-			if (theme === "system" && enableSystem && !forcedTheme) {
-				applyTheme("system");
-			}
-		},
-		[theme, forcedTheme],
-	);
+	const handleMediaQuery = (_e: MediaQueryListEvent | MediaQueryList) => {
+		if (theme === "system" && enableSystem && !forcedTheme) {
+			applyTheme("system");
+		}
+	};
 
 	// Always listen to System preference
 	React.useEffect(() => {
@@ -192,15 +185,12 @@ const Theme = ({
 		applyTheme(forcedTheme ?? theme);
 	}, [forcedTheme, theme]);
 
-	const providerValue = React.useMemo(
-		() => ({
-			theme,
-			setTheme,
-			forcedTheme,
-			themes: enableSystem ? [...themes, "system"] : themes,
-		}),
-		[theme, setTheme, forcedTheme, enableSystem, themes],
-	);
+	const providerValue = {
+		theme,
+		setTheme,
+		forcedTheme,
+		themes: enableSystem ? [...themes, "system"] : themes,
+	};
 
 	return (
 		<ThemeContext.Provider value={providerValue}>

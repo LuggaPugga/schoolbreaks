@@ -26,7 +26,7 @@ import {
 	Ellipsis,
 	RotateCcw,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -50,20 +50,17 @@ export default function MainPage({
 	subdivisionCode?: string | null;
 }) {
 	const [languagePreference] = useLanguagePreference();
-	const language = useMemo(
-		() => preferenceToApiLanguage(languagePreference),
-		[languagePreference],
-	);
+	const language = preferenceToApiLanguage(languagePreference);
 	const navigate = useNavigate();
 
-	const currentYear = useMemo(() => new Date().getFullYear(), []);
+	const currentYear = new Date().getFullYear();
 	const [viewYear, setViewYear] = useState<number>(currentYear);
-	const start = useMemo(() => new Date(viewYear, 0, 1), [viewYear]);
-	const end = useMemo(() => new Date(viewYear, 11, 31), [viewYear]);
+	const start = new Date(viewYear, 0, 1);
+	const end = new Date(viewYear, 11, 31);
 
 	const { data: countries } = useListCountries({ language });
 
-	const targetCountryIso = useMemo(() => {
+	const targetCountryIso = (() => {
 		if (countryIsoCode) return countryIsoCode;
 		if (!country || !countries?.length) return null;
 		const incomingSlug = normalizeSlug(country);
@@ -73,14 +70,14 @@ export default function MainPage({
 				c.name?.some((n) => n.text && normalizeSlug(n.text) === incomingSlug),
 			)?.isoCode ?? null
 		);
-	}, [countryIsoCode, country, countries]);
+	})();
 
 	const { data: allSubdivisions } = useListSubdivisions(targetCountryIso, {
 		enabled: Boolean(targetCountryIso),
 		language,
 	});
 
-	const targetSubdivisionCode = useMemo(() => {
+	const targetSubdivisionCode = (() => {
 		if (subdivisionCode) return subdivisionCode;
 		if (!subdivision || !allSubdivisions?.length) return null;
 		const incomingSlug = normalizeSlug(subdivision);
@@ -90,7 +87,7 @@ export default function MainPage({
 				s.name?.some((n) => n.text && normalizeSlug(n.text) === incomingSlug),
 			)?.code ?? null
 		);
-	}, [subdivisionCode, subdivision, allSubdivisions]);
+	})();
 
 	const {
 		data: holidays,
@@ -105,7 +102,7 @@ export default function MainPage({
 		{ enabled: Boolean(targetCountryIso) },
 	);
 
-	const sortedHolidays = useMemo(() => {
+	const sortedHolidays = (() => {
 		if (!Array.isArray(holidays)) return [];
 		
 		const now = new Date();
@@ -123,7 +120,7 @@ export default function MainPage({
 				
 				return compareAsc(a.startDate as Date, b.startDate as Date);
 			});
-	}, [holidays, viewYear, currentYear]);
+	})();
 
 	const listRef = useRef<HTMLDivElement | null>(null);
 
@@ -153,43 +150,38 @@ export default function MainPage({
 		scrollMargin: listRef.current?.offsetTop ?? 0,
 	});
 
-	const subdivisionNames = useMemo(() => {
-		return new Map(
-			(allSubdivisions ?? []).map((subdivision) => [
-				subdivision.code,
-				subdivision.name?.[0]?.text ?? subdivision.code,
-			]),
-		);
-	}, [allSubdivisions]);
+	const subdivisionNames = new Map(
+		(allSubdivisions ?? []).map((subdivision) => [
+			subdivision.code,
+			subdivision.name?.[0]?.text ?? subdivision.code,
+		]),
+	);
 
-	const navigateForSelection = useCallback(
-		(nextCountryIso: string | null, nextSubdivisionCode: string | null) => {
-			if (!nextCountryIso) {
-				navigate({ to: "/" });
-				return;
-			}
-			const countryObj = countries?.find((c) => c.isoCode === nextCountryIso);
-			const countrySlug = countryObj
-				? normalizeSlug(countryObj.name?.[0]?.text ?? nextCountryIso)
-				: nextCountryIso.toLowerCase();
-			if (nextSubdivisionCode) {
-				const subObj = allSubdivisions?.find((s) => s.code === nextSubdivisionCode);
-				const subSlug = subObj
-					? normalizeSlug(subObj.name?.[0]?.text ?? nextSubdivisionCode)
-					: nextSubdivisionCode.toLowerCase();
-				navigate({
-					to: "/$country/{-$subdivision}",
-					params: { country: countrySlug, subdivision: subSlug },
-				});
-				return;
-			}
+	const navigateForSelection = (nextCountryIso: string | null, nextSubdivisionCode: string | null) => {
+		if (!nextCountryIso) {
+			navigate({ to: "/" });
+			return;
+		}
+		const countryObj = countries?.find((c) => c.isoCode === nextCountryIso);
+		const countrySlug = countryObj
+			? normalizeSlug(countryObj.name?.[0]?.text ?? nextCountryIso)
+			: nextCountryIso.toLowerCase();
+		if (nextSubdivisionCode) {
+			const subObj = allSubdivisions?.find((s) => s.code === nextSubdivisionCode);
+			const subSlug = subObj
+				? normalizeSlug(subObj.name?.[0]?.text ?? nextSubdivisionCode)
+				: nextSubdivisionCode.toLowerCase();
 			navigate({
 				to: "/$country/{-$subdivision}",
-				params: { country: countrySlug },
+				params: { country: countrySlug, subdivision: subSlug },
 			});
-		},
-		[allSubdivisions, countries, navigate],
-	);
+			return;
+		}
+		navigate({
+			to: "/$country/{-$subdivision}",
+			params: { country: countrySlug },
+		});
+	};
 
 	const hasCountry = Boolean(targetCountryIso);
 	const hasSubdivision = Boolean(targetSubdivisionCode);
