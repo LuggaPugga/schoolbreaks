@@ -3,7 +3,6 @@ import {
 	Scripts,
 	createRootRouteWithContext,
 } from "@tanstack/react-router";
-import { Analytics } from "@vercel/analytics/react";
 
 import appCss from "../styles.css?url";
 
@@ -11,6 +10,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/lib/use-language";
 import Footer from "@/components/footer";
 import type { QueryClient } from "@tanstack/react-query";
+import Analytics from "@/components/analytics";
 
 interface MyRouterContext {
 	queryClient: QueryClient;
