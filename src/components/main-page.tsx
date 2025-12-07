@@ -94,10 +94,10 @@ export default function MainPage({
 
 	const sortedHolidays = (() => {
 		if (!Array.isArray(holidays)) return [];
-		
+
 		const now = new Date();
 		const includePast = viewYear !== currentYear;
-		
+
 		return holidays
 			.filter((h) => {
 				if (!h.startDate || !h.endDate) return true;
@@ -107,7 +107,7 @@ export default function MainPage({
 			.sort((a, b) => {
 				if (!a.startDate || !a.endDate) return 1;
 				if (!b.startDate || !b.endDate) return -1;
-				
+
 				return compareAsc(a.startDate as Date, b.startDate as Date);
 			});
 	})();
@@ -196,7 +196,7 @@ export default function MainPage({
 				</div>
 			</header>
 
-			<div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 -mx-3 sm:-mx-6 px-3 sm:px-6 py-4 mb-6 border-b border-border/40">
+			<div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80 -mx-3 sm:-mx-6 px-3 sm:px-6 py-4 mb-6 border-b border-border/40">
 				<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
 					<div className="flex-1">
 						<CountrySubdivisionPicker
@@ -215,7 +215,7 @@ export default function MainPage({
 							}}
 						/>
 					</div>
-					
+
 					<div className="flex items-center justify-between sm:justify-end gap-2 bg-muted/50 rounded-lg px-3 py-2">
 						<div className="flex items-center gap-1">
 							<Button
@@ -228,7 +228,7 @@ export default function MainPage({
 							>
 								<ChevronLeft className="size-4" />
 							</Button>
-							<span className="min-w-[3rem] text-center text-sm font-semibold tabular-nums">
+							<span className="min-w-12 text-center text-sm font-semibold tabular-nums">
 								{viewYear}
 							</span>
 							<Button
