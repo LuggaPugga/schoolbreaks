@@ -16,6 +16,13 @@ const config = defineConfig({
 		viteTsConfigPaths({
 			projects: ["./tsconfig.json"],
 		}),
+		nitro({
+			vercel: {
+				functions: {
+					runtime: "bun1.x",
+				},
+			},
+		}),
 		tailwindcss(),
 		tanstackStart(),
 		viteReact({
@@ -23,7 +30,6 @@ const config = defineConfig({
 				plugins: ["babel-plugin-react-compiler"],
 			},
 		}),
-		nitro(),
 	],
 });
 
