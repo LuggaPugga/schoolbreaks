@@ -20,7 +20,7 @@
         "date-fns": "^4.1.0",
         "lucide-react": "^0.564.0",
         "nitro": "^3.0.1-alpha.1",
-        "onedollarstats": "^0.0.11",
+        "onedollarstats": "^0.0.12",
         "open-holiday-js": "^1.0.3",
         "react": "^19.2.1",
         "react-day-picker": "^9.12.0",
@@ -753,7 +753,7 @@
 
     "ohash": ["ohash@2.0.11", "", {}, "sha512-RdR9FQrFwNBNXAr4GixM8YaRZRJ5PUWbKYbE5eOsrwAjJW0q2REGcf79oYPsLyskQCZG1PLN+S/K1V00joZAoQ=="],
 
-    "onedollarstats": ["onedollarstats@0.0.11", "", {}, "sha512-GboD/AZdfQB9Bhs0uupp40jG/F+yI4ed7rkUI6zbtXXqqKdo8qlT1ZqGATXF4zccBXnPylUvG7bYpiDyaONpjg=="],
+    "onedollarstats": ["onedollarstats@0.0.12", "", {}, "sha512-YPGGUxVqAstQmMmWNi4ce/UPeogj2eIa4k/uwZaWIvgSwzp2E/wZ8z7ZFIgISKxvWM0zJOSOGYyL2ZxrcGE/Qw=="],
 
     "open-holiday-js": ["open-holiday-js@1.0.3", "", { "dependencies": { "zod": "^3.22.4" } }, "sha512-M6xcFSwq4zf9ahj62NRM6QbuVpl3PbZV9KQS06kwJRtZrAF/tyOIKjtdT22IN2A8cZMfi7+vwtqVq4zxTXZ//A=="],
 
