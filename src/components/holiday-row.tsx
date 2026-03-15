@@ -199,6 +199,7 @@ export default function HolidayRow({
 										from: holiday.startDate,
 										to: holiday.endDate,
 									}}
+									onSelect={() => {}}
 									fixedWeeks
 									numberOfMonths={days && days > 31 ? 2 : 1}
 									className="rounded-md border"
