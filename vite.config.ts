@@ -1,21 +1,12 @@
-import path from "node:path";
+import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import viteReact from "@vitejs/plugin-react";
+import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
-import viteTsConfigPaths from "vite-tsconfig-paths";
 
 const config = defineConfig({
-	resolve: {
-		alias: {
-			"@": path.resolve(__dirname, "src"),
-		},
-	},
 	plugins: [
-		viteTsConfigPaths({
-			projects: ["./tsconfig.json"],
-		}),
 		nitro({
 			vercel: {
 				functions: {
@@ -25,10 +16,9 @@ const config = defineConfig({
 		}),
 		tailwindcss(),
 		tanstackStart(),
-		viteReact({
-			babel: {
-				plugins: ["babel-plugin-react-compiler"],
-			},
+		react(),
+		babel({
+			presets: [reactCompilerPreset()],
 		}),
 	],
 });
