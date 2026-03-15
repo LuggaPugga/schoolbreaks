@@ -10,13 +10,7 @@ const config = defineConfig({
 		tsconfigPaths: true,
 	},
 	plugins: [
-		nitro({
-			vercel: {
-				functions: {
-					runtime: "bun1.x",
-				},
-			},
-		}),
+		nitro(),
 		tailwindcss(),
 		tanstackStart(),
 		react(),
