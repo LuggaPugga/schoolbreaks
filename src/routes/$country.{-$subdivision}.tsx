@@ -24,8 +24,8 @@ export const Route = createFileRoute("/$country/{-$subdivision}")({
 			meta: [
 				{ title: pageTitle },
 				{ name: "description", content: description },
-				{ name: "og:title", content: pageTitle },
-				{ name: "og:description", content: description },
+				{ property: "og:title", content: pageTitle },
+				{ property: "og:description", content: description },
 			],
 		};
 	},

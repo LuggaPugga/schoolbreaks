@@ -19,9 +19,9 @@ export const Route = createFileRoute("/")({
 				name: "description",
 				content: "Plan smarter with school holiday calendars.",
 			},
-			{ name: "og:title", content: "School Breaks" },
+			{ property: "og:title", content: "School Breaks" },
 			{
-				name: "og:description",
+				property: "og:description",
 				content: "Plan smarter with school holiday calendars.",
 			},
 		],
