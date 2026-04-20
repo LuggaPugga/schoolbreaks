@@ -29,7 +29,7 @@
     "date-fns": "^4.1.0",
     "lucide-react": "^0.577.0",
     "nitro": "^3.0.260311-beta",
-    "onedollarstats": "^0.0.18",
+    "onedollarstats": "^0.0.19",
     "open-holiday-js": "^1.0.3",
     "react": "^19.2.4",
     "react-day-picker": "^9.14.0",
