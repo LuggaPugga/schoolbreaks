@@ -5,7 +5,7 @@
     "": {
       "name": "schoolbreaks",
       "dependencies": {
-        "@faststats/react": "0.2.10",
+        "@faststats/react": "0.2.11",
         "@radix-ui/react-dropdown-menu": "^2.1.16",
         "@radix-ui/react-slot": "^1.2.4",
         "@tailwindcss/vite": "^4.2.1",
@@ -160,9 +160,9 @@
 
     "@esbuild/win32-x64": ["@esbuild/win32-x64@0.27.4", "", { "os": "win32", "cpu": "x64" }, "sha512-+knoa0BDoeXgkNvvV1vvbZX4+hizelrkwmGJBdT17t8FNPwG2lKemmuMZlmaNQ3ws3DKKCxpb4zRZEIp3UxFCg=="],
 
-    "@faststats/react": ["@faststats/react@0.2.10", "", { "dependencies": { "@faststats/web": "^0.2.10" }, "peerDependencies": { "react": ">=18" } }, "sha512-qNDvbOdtQ54HDKr4lFvw2L9oHvEaJJi8l9Ioyn0yQZTzR8H4uet2hr+RLjOvavhqsllz9veCa9FYP3Ch+fNOvA=="],
+    "@faststats/react": ["@faststats/react@0.2.11", "", { "dependencies": { "@faststats/web": "^0.2.11" }, "peerDependencies": { "react": ">=18" } }, "sha512-dD09v8p1OP6v1a/lzxRprK9O9UIkJUa5E0/u0SQeQq8xHvOJa3ScykI55fzSILVXltcBN5vztcJ5u/KUs3PZIQ=="],
 
-    "@faststats/web": ["@faststats/web@0.2.10", "", { "dependencies": { "@rrweb/rrweb-plugin-console-record": "^2.0.0-alpha.20", "@rrweb/rrweb-plugin-sequential-id-record": "^2.0.0-alpha.20", "@rrweb/types": "^2.0.0-alpha.20", "rrweb": "^2.0.0-alpha.4", "rrweb-snapshot": "^2.0.0-alpha.4", "web-vitals": "^5.1.0" } }, "sha512-iW10lxCw8UnITikul8dCMhN+jlMchL1IR5y4TCdTz1tNeyvtxzQWsOQhRTuLCpliP7psOMQ2nZ5nYrqbtQTjaQ=="],
+    "@faststats/web": ["@faststats/web@0.2.11", "", { "dependencies": { "@rrweb/rrweb-plugin-console-record": "^2.0.0-alpha.20", "@rrweb/rrweb-plugin-sequential-id-record": "^2.0.0-alpha.20", "@rrweb/types": "^2.0.0-alpha.20", "rrweb": "^2.0.0-alpha.4", "rrweb-snapshot": "^2.0.0-alpha.4", "web-vitals": "^5.1.0" } }, "sha512-PqeWo7KROL9NvK0XMEl1MaJzpjaR108ZLUFQEw/aMFq1VDrU31+/yPErqg4KCmB2qp7Pe1xeObWHmJDi4O53sg=="],
 
     "@floating-ui/core": ["@floating-ui/core@1.7.5", "", { "dependencies": { "@floating-ui/utils": "^0.2.11" } }, "sha512-1Ih4WTWyw0+lKyFMcBHGbb5U5FtuHJuujoyyr5zTaWS5EYMeT6Jb2AuDeftsCsEuchO+mM2ij5+q9crhydzLhQ=="],
 
