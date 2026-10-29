@@ -13,6 +13,10 @@ import Footer from "@/components/footer";
 import type { QueryClient } from "@tanstack/react-query";
 import OnedollarAnalytics from "@/components/analytics";
 import { Analytics } from "@faststats/react";
+import { errorTracking } from "@faststats/react/error";
+import { webVitals } from "@faststats/react/web-vitals";
+
+const analyticsExtensions = [errorTracking(), webVitals()];
 
 interface MyRouterContext {
 	queryClient: QueryClient;
@@ -86,7 +90,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				</LanguageProvider>
 				<Scripts />
 				<OnedollarAnalytics />
-				<Analytics siteKey="b78c1a4bd51bce5e8fd591a876a4f9c2" trackErrors trackWebVitals/>
+				<Analytics
+					siteKey="b78c1a4bd51bce5e8fd591a876a4f9c2"
+					extensions={analyticsExtensions}
+				/>
 			</body>
 		</html>
 	);

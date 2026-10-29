@@ -13,6 +13,7 @@ export const getRouter = () => {
 		routeTree,
 		context: { ...rqContext },
 		defaultPreload: "intent",
+		// biome-ignore lint/correctness/noComponentHookFactories: created once per router instance (TanStack's documented pattern)
 		Wrap: (props: { children: React.ReactNode }) => {
 			return (
 				<TanstackQuery.Provider {...rqContext}>
