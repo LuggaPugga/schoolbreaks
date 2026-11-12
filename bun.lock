@@ -20,7 +20,7 @@
         "date-fns": "^4.4.0",
         "lucide-react": "^1.64.0",
         "nitro": "^3.0.260903-beta",
-        "onedollarstats": "^0.0.24",
+        "onedollarstats": "^0.0.25",
         "open-holiday-js": "^1.0.3",
         "react": "^19.3.1",
         "react-day-picker": "^10.0.2",
@@ -517,7 +517,7 @@
 
     "ocache": ["ocache@0.3.1", "", {}, "sha512-qeBrhQ0ly6tgXsakgNwLx6diRUppJZIcV5OjVGa5yp9HzztutkaGDDXJqVMo1fKWz5fNDtTp3iPU2fuhHf0+Lg=="],
 
-    "onedollarstats": ["onedollarstats@0.0.24", "", { "peerDependencies": { "expo-router": ">=3.0.0", "react": ">=18.0.0", "react-native": ">=0.73.0" }, "optionalPeers": ["expo-router", "react", "react-native"] }, "sha512-q/H3Gcu1zyeCJ1bLi6RwOXt8CwOZZoY06M/N99ZNRIIZFIo06CdtUSllBkA5Asv7+e90rd37kPi4CfX+LfvCpw=="],
+    "onedollarstats": ["onedollarstats@0.0.25", "", { "peerDependencies": { "expo-router": ">=3.0.0", "react": ">=18.0.0", "react-native": ">=0.73.0" }, "optionalPeers": ["expo-router", "react", "react-native"] }, "sha512-Mv4GrDhCzEJ7LPIUAA5z2JTAEaRlNnIpzODMLsLToT7G5zK+4dSm4fxM7O9QswmQbqn9DwDBnUpjkKCjTL0+QQ=="],
 
     "onetime": ["onetime@5.1.2", "", { "dependencies": { "mimic-fn": "^2.1.0" } }, "sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg=="],
 
